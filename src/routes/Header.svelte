@@ -1,6 +1,10 @@
 <script>
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import github from '$lib/images/github.svg';
+
+	export let data;
+	let selectedUnits = data.units;
 </script>
 
 <header>
@@ -30,7 +34,21 @@
 		</svg>
 	</nav>
 
-	<div class="corner"></div>
+	<div class="corner">
+		<select
+			name="units"
+			bind:value={selectedUnits}
+			on:change={() => {
+				$page.url.searchParams.set('units', selectedUnits);
+				goto(`?${$page.url.searchParams.toString()}`);
+			}}
+		>
+			<option value="" hidden selected>-</option>
+			<option value="metric">°C</option>
+			<option value="imperial">°F</option>
+			<option value="">°K</option>
+		</select>
+	</div>
 </header>
 
 <style>

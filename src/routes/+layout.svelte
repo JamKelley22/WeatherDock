@@ -1,10 +1,13 @@
 <script>
 	import Header from './Header.svelte';
 	import './styles.css';
+
+	/** @type {import('./$types').LayoutData} */
+	export let data;
 </script>
 
 <div class="app">
-	<Header />
+	<Header {data} />
 
 	<main>
 		<form>

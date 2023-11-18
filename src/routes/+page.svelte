@@ -1,9 +1,14 @@
 <script>
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+
 	/** @type {import('./$types').PageData} */
 	export let data;
 
 	/** @type {import('./$types').ActionData} */
 	export let form;
+
+	let zipCode = data.zipCode || '';
 </script>
 
 <svelte:head>
@@ -12,44 +17,56 @@
 </svelte:head>
 
 <section>
-	<form method="POST">
+	<div>
 		<div>
 			<h1>WeatherDock</h1>
 		</div>
 		<div class="zipCodeSearch">
-			<input name="zipCode" value={data.zipCode} />
-			<button type="submit">Go</button>
-			{#if data.lat && data.lon}
+			<input
+				name="zipCode"
+				bind:value={zipCode}
+				on:input={() => {
+					$page.url.searchParams.set('zipCode', zipCode);
+					goto(`?${$page.url.searchParams.toString()}`);
+				}}
+			/>
+			{#if data.zipCode}
 				<div>
-					<p>Lat: {data.lat}</p>
-					<p>Long: {data.lon}</p>
+					<p>Location: {data.name}</p>
 				</div>
 			{/if}
 		</div>
+		<img alt="Weather Icon" />
 		<div class="currentWeatherInfoBlock">
 			<div>
 				<h3>Temperature</h3>
-				<p>This is a test</p>
+
+				{#if form?.success}
+					<p>{form.temp}</p>
+				{:else}
+					<p>{data.temp}</p>
+				{/if}
 			</div>
 			<div class="verticalLine" />
 			<div>
 				<h3>Wind</h3>
+				{#if form?.success}
+					<p>{form.wind_speed}</p>
+				{:else}
+					<p>{data.wind_speed}</p>
+				{/if}
 			</div>
 			<div class="verticalLine" />
 			<div>
 				<h3>Humidity</h3>
+				{#if form?.success}
+					<p>{form.humidity}%</p>
+				{:else}
+					<p>{data.humidity}%</p>
+				{/if}
 			</div>
 		</div>
-		<select name="units" value={data.units}>
-			<option value="celsius">°C</option>
-			<option value="fahrenheit" selected>°F</option>
-		</select>
-		{#if form?.success}
-			<!-- this message is ephemeral; it exists because the page was rendered in
-		   response to a form submission. it will vanish if the user reloads -->
-			<p>Successfully</p>
-		{/if}
-	</form>
+	</div>
 </section>
 
 <style>
@@ -62,6 +79,7 @@
 	}
 	.zipCodeSearch {
 		display: flex;
+		flex-direction: column;
 		gap: 1em;
 		justify-content: center;
 	}

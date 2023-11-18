@@ -1,7 +1,9 @@
 <script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+	/** @type {import('./$types').PageData} */
+	export let data;
+
+	/** @type {import('./$types').ActionData} */
+	export let form;
 </script>
 
 <svelte:head>
@@ -10,22 +12,44 @@
 </svelte:head>
 
 <section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
+	<form method="POST">
+		<div>
+			<h1>WeatherDock</h1>
+		</div>
+		<div class="zipCodeSearch">
+			<input name="zipCode" value={data.zipCode} />
+			<button type="submit">Go</button>
+			{#if data.lat && data.lon}
+				<div>
+					<p>Lat: {data.lat}</p>
+					<p>Long: {data.lon}</p>
+				</div>
+			{/if}
+		</div>
+		<div class="currentWeatherInfoBlock">
+			<div>
+				<h3>Temperature</h3>
+				<p>This is a test</p>
+			</div>
+			<div class="verticalLine" />
+			<div>
+				<h3>Wind</h3>
+			</div>
+			<div class="verticalLine" />
+			<div>
+				<h3>Humidity</h3>
+			</div>
+		</div>
+		<select name="units" value={data.units}>
+			<option value="celsius">°C</option>
+			<option value="fahrenheit" selected>°F</option>
+		</select>
+		{#if form?.success}
+			<!-- this message is ephemeral; it exists because the page was rendered in
+		   response to a form submission. it will vanish if the user reloads -->
+			<p>Successfully</p>
+		{/if}
+	</form>
 </section>
 
 <style>
@@ -36,24 +60,17 @@
 		align-items: center;
 		flex: 0.6;
 	}
-
-	h1 {
-		width: 100%;
+	.zipCodeSearch {
+		display: flex;
+		gap: 1em;
+		justify-content: center;
 	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
+	.verticalLine {
+		border-left: 1px solid gray;
+		margin: 1em 0;
 	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
+	.currentWeatherInfoBlock {
+		display: flex;
+		gap: 2em;
 	}
 </style>
